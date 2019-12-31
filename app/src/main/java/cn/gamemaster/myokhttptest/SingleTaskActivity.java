@@ -13,11 +13,13 @@ import android.widget.TextView;
 
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.SpeedCalculator;
 import com.liulishuo.okdownload.core.breakpoint.BlockInfo;
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
+import com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.DownloadListener4WithSpeed;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
@@ -26,6 +28,9 @@ import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public class SingleTaskActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -55,6 +60,16 @@ public class SingleTaskActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initData() {
+        DownloadOkHttp3Connection.Factory factory = new DownloadOkHttp3Connection.Factory();
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true);
+        factory.setBuilder(clientBuilder);
+        OkDownload.Builder builder = new OkDownload.Builder(this).connectionFactory(factory);
+        OkDownload.setSingletonInstance(builder.build());
+
         start = false;
         task = new DownloadTask.Builder(getUrl(), getParentFile())
                 .setFilename(getFileName())
