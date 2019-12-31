@@ -88,8 +88,6 @@ public class SingleTaskActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
                 updateStatus("taskEnd cause "+cause+" Exception "+(realCause == null ? " is null ": realCause.getMessage()));
-                start = false;
-                doAction();
             }
         };
     }
